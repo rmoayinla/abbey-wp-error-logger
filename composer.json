@@ -1,0 +1,9 @@
+{
+	"require":{
+		"zendframework/zend-log": "^2.8"
+	},
+
+	"config":{
+		"optimize-autoloader": true
+	}
+}
