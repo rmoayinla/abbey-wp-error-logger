@@ -21,9 +21,11 @@ abstract class Abstract_Logger_Module{
 	/**
 	 * Set the $logger instance 
 	 *@param $logger 	an instance of  Logger Interface $logger 
+	 *@return $this 	instance of this class 
 	 */
 	public function setLogger( LoggerInterface $logger ){
 		$this->logger = $logger;
+		return $this; //make method chainable //
 	}
 
 	/**
@@ -41,6 +43,7 @@ abstract class Abstract_Logger_Module{
 	public function getWriters(){
 		return  ( $this->logger->getWriters()->count() > 0 )? $this->logger->getWriters()->toArray() : [];
 	}
+
 
 	/**
 	 * Get all writter/logged errors from all writers
