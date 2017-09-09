@@ -46,17 +46,31 @@ abstract class Abstract_Logger_Module{
 
 
 	/**
-	 * Get all writter/logged errors from all writers
+	 * Get all writter/logged errors from all or passed writers
 	 *@return array 	$log 		multi-dimensional array of logged data 
 	 */
-	public function getErrorLogs(){
+	public function getErrorLogs( $writer = null, $options = [] ){
 
  		if( empty( $this->getWriters() ) ) //throw exception if no writer is added yet //
  			throw new \Exception( "No writers found in Logger" );
- 		$log = [];
- 		foreach( $this->getWriters() as $writer ){
- 			if( !method_exists( $writer, "getErrorEvents" ) ) continue; //skip if the method is not found //
- 			$log[] = $writer->getErrorEvents();
+
+ 		/** check if a writer is passed and try validating the writer */
+ 		if( !empty( $writer ) ){
+ 			//if passed writer is a string, try getting the writer instance //
+ 			if( is_string( $writer ) ) $writer = $this->logger->writerPlugin( $writer, $options );
+
+ 			//throw exception if writer passed is not valid //
+ 			if( empty( $writer ) || ! $writer instanceof \Zend\Log\Writer\WriterInterface )
+ 				throw new \Exception( __( "Invalid writer passed to getErrorLogs", "abbey-wp-error" ) );
+
+ 			return $writer->getErrorEvents(); //return the writer logged events/errors //
+ 		}
+
+ 		$log = []; //container to store logs from different writers //
+ 		
+ 		foreach( $this->getWriters() as $log_writer ){
+ 			if( !method_exists( $log_writer, "getErrorEvents" ) ) continue; //skip if the method is not found //
+ 			$log[] = $log_writer->getErrorEvents();
  		}
  		return $log;
  	}
