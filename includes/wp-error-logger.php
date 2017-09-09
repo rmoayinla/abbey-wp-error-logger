@@ -60,6 +60,17 @@ class WP_Error_Logger implements Module_Interface{
 	}
 
 	/**
+	 * Alias method for the $logger->log method 
+	 * events/errors can be logged by calling the WP_Error_Logger log method with just a message
+	 * events/erros will only log when writers has been added before calling this function 
+	 *@return: $this 		an instance of WP_Error_Logger 
+	 */
+	public function log( $message, $metas = [], $priority = 1 ){
+		$this->getLogger()->log( $priority, $message, $metas );
+		return $this;
+	}
+
+	/**
 	 * Set the logger to null, calling the logger destroy method 
 	 */
 	public function __destroy(){
