@@ -55,6 +55,8 @@ global $abbey_error_logger, $abbey_logger;
  */
 	$abbey_error_logger = $abbey_logger->getLogger();
 
+	//add a WP Processor to add Wordpress like details //
+	$abbey_error_logger->addProcessor( new Zend\Log\Processor\WPEvent() );
 
 
 /**
@@ -66,6 +68,12 @@ global $abbey_error_logger, $abbey_logger;
 
 	//add additional stream writer to the module //
 	$writer_module->addWriter( "stream", array( "stream" => ABBEY_WP_ERROR_PLUGIN_DIR."log.txt" )  );
+
+	$wp_logging = new Zend\Log\WPlogging\WP_Logging();
+	$wp_db_writer = new Zend\Log\Writer\WpDb( $wp_logging );
+
+
+	$writer_module->addWriter( $wp_db_writer, array() );
 
 	//a default formatter module, this sets format for the stream writer //
 	$formatter_module = new modules\Formatter_Module();
@@ -90,8 +98,13 @@ global $abbey_error_logger, $abbey_logger;
  */
 	$abbey_logger->runModule();
 
-$abbey_logger->log( "Logged message" );
+/**
+ * Set the logger to log exceptions, errors and run on shutdown 
+ */
+	$abbey_error_logger::registerFatalErrorShutdownFunction( $abbey_error_logger );
+	$abbey_error_logger::registerExceptionHandler( $abbey_error_logger );
+	$abbey_error_logger::registerErrorHandler( $abbey_error_logger, true );
+
 	
-
-
+	
 
