@@ -1,0 +1,3 @@
+[submodule "wp-logging"]
+	path = wp-logging
+	url = https://github.com/rmoayinla/wp-logging
