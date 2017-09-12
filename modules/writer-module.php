@@ -39,8 +39,9 @@ use \Zend\Log\LoggerInterface;
  	 * @param: 	string|object 	$writer 	writer name or instance of writer class
  	 * 			array 			$options 	array of options for the writer class
  	 */
- 	public function addWriter( $writer, $options ){
- 		$this->writers[ (string)$writer ] = [ "writer" => $writer, "options" => $options ];
+ 	public function addWriter( $writer, $options= [] ){
+ 		$writer_name = is_object( $writer ) ? get_class( $writer ) : $writer;
+ 		$this->writers[ $writer_name ] = [ "writer" => $writer, "options" => $options ];
  		return $this;
  	}
 
