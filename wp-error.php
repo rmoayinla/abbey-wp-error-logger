@@ -1,12 +1,15 @@
 <?php
 /**
- *
  * Plugin Name: Abbey WP Error
  * Description: A wordpress plugin for handling WP core, plugin and theme errors, handles how errors are logged and displayed
  * Version: 0.1.1
  * Author: Rabiu Mustapha 
  * Text Domain: abbey-wp-error
  *
+ *
+ * This wordpress plugin is built on Zend Logger library 
+ *@see:
+ * Events are logged by writers e.g. Stream, DB, Mal 
 */
 
 //exit with an error message if this page is accessed directly or not within wordpress //
@@ -69,10 +72,17 @@ global $abbey_error_logger, $abbey_logger;
 	//add additional stream writer to the module //
 	$writer_module->addWriter( "stream", array( "stream" => ABBEY_WP_ERROR_PLUGIN_DIR."log.txt" )  );
 
-	$wp_logging = new Zend\Log\WPlogging\WP_Logging();
-	$wp_db_writer = new Zend\Log\Writer\WpDb( $wp_logging );
+	/**
+	 * Add a wordpress database writer 
+	 * the wordpress db writer depends on Pippins WP_Logging plugin
+	 */
+		//pippins wp_logging class //
+		$wp_logging = new Zend\Log\WPlogging\WP_Logging();
 
+		// main writer that extends Zend Abstract Writer //
+		$wp_db_writer = new Zend\Log\Writer\WpDb( $wp_logging );
 
+	//add the WP Db writer to our writer module //
 	$writer_module->addWriter( $wp_db_writer, array() );
 
 	//a default formatter module, this sets format for the stream writer //
