@@ -44,6 +44,9 @@ class WPDb extends AbstractWriter
 
         //filter for WP_Logging to add Zend\Log priorities //
         add_filter( 'wp_log_types', array( $this, 'add_logger_priorities' ) );
+
+        //enable prunning/deletion of old logs via wordpress cron //
+        add_filter( 'wp_logging_should_we_prune', array( $this, 'activate_pruning' ), 10 );
     }
 
     /**
@@ -71,10 +74,10 @@ class WPDb extends AbstractWriter
 
         $extra = [];
         
-        if( isset( $events['extra'] ) ){
+        if( isset( $events['extra'] ) )
             $extra = $events['extra'];
-        }
-
+        
+        //insert the log by calling the handler insert_log method //
         $this->handler->insert_log( $events, $extra );
     }
 
@@ -87,7 +90,10 @@ class WPDb extends AbstractWriter
     public function add_logger_priorities( $types ){
         $logger = new Logger();
         $priorities = $logger->priorities;
+
+        //bail and return the default types if there are no priorities set //
         if( empty( $priorities ) ) return $types;
+
         foreach( $priorities as $priority ){
             array_push( $types, $priority  );
         } 
@@ -96,6 +102,10 @@ class WPDb extends AbstractWriter
 
     function getErrorEvents(){
         return $this->events;
+    }
+
+    public function activate_prunning( $prunning_active ){
+        return true;
     }
 
    
